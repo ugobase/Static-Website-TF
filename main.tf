@@ -15,7 +15,7 @@ resource "aws_s3_bucket" "base-bucket" {
 
 resource "aws_s3_bucket_policy" "base-policy" {
   bucket = aws_s3_bucket.base-bucket.id
-  
+
   policy = templatefile("policy.tpl", {
     bucket_arn = aws_s3_bucket.base-bucket.arn
   })
@@ -48,16 +48,16 @@ resource "aws_s3_bucket_website_configuration" "base-website" {
 }
 
 resource "aws_s3_object" "html_files" {
-  for_each = toset(["error.html", "index.html"])  # Create both error.html and index.html
+  for_each = toset([var.for-html[0], var.for-html[1]]) # Create both error.html and index.html
 
-  bucket      = aws_s3_bucket.base-bucket.id
-  key         = each.value    # Use each value (either error.html or index.html)
-  source      = "./${each.value}"  # Dynamically reference the file path
-  etag        = filemd5("./${each.value}")
+  bucket       = aws_s3_bucket.base-bucket.id
+  key          = each.value        # Use each value (either error.html or index.html)
+  source       = "./${each.value}" # Dynamically reference the file path
+  etag         = filemd5("./${each.value}")
   content_type = "text/html"
 
   tags = merge(local.common_tags, {
-    Document = "Html Files"
+    Document = var.doc
   })
 
   lifecycle {

@@ -21,6 +21,6 @@ output "s3_object" {
 output "s3_object_check" {
   value = { for k, v in aws_s3_object.html_files : k => v.checksum_crc32 }
 
-  depends_on = [ aws_s3_bucket.base-bucket ]
+  depends_on = [aws_s3_bucket.base-bucket]
 
-  }
+}
